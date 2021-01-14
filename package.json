@@ -1,0 +1,16 @@
+{
+  "name": "movies",
+  "version": "1.0.0",
+  "description": "movies rest api - tsh recruitment task",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node index.ts"
+  },
+  "author": "Bartek Kurpanik",
+  "license": "MIT",
+  "devDependencies": {
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  }
+}
