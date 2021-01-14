@@ -7,12 +7,12 @@ configure({
         "tsh-movies": { type: "file", filename: "./tsh-movies.log" }
     },
     categories: {
-        default: { appenders: ['out', 'tsh-movies'], level: 'debug' }
+        default: { appenders: ["out", "tsh-movies"], level: "debug" }
     }
 });
 
-export const registerLogger = (container: AwilixContainer) => {
+export const registerLogger = (container: AwilixContainer): void => {
     container.register({
         logger: asValue(getLogger("info"))
     });
-}
+};

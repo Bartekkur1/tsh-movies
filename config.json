@@ -1,1 +1,9 @@
-{}
+{
+    "lowdb": {
+        "path": "./data/db.json"
+    },
+    "express": {
+        "port": "8000",
+        "address": "localhost"
+    }
+}

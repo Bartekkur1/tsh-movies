@@ -1,6 +1,6 @@
 {
     "env": {
-        "node": true,
+        "node": true
     },
     "extends": [
         "eslint:recommended",
@@ -16,10 +16,7 @@
     ],
     "rules": {
         "no-console": 1,
-        "indent": [
-            "error",
-            "tab"
-        ],
+        "indent": ["error", 4, { "SwitchCase": 1 }],
         "linebreak-style": [
             "error",
             "windows"
