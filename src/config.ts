@@ -14,8 +14,9 @@ export interface AppConfig {
     lowdb: LowdbConfig;
 }
 
-export const validateConfig = (config: AppConfig): void => {
+export const validateConfig = (config: AppConfig): AppConfig => {
     // TODO: Add Joi
+    return config;
 };
 
 export const registerAppConfig = (config: AppConfig, container: AwilixContainer): void => {

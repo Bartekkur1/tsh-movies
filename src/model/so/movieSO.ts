@@ -1,6 +1,8 @@
 import { Genre } from "../entity/genres";
 
-export default interface MovieSO {
+interface MovieSO {
     genres?: Genre[];
     duration?: number;
 }
+
+export default MovieSO;

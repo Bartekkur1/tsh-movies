@@ -1,6 +1,6 @@
 import { Genre } from "./genres";
 
-export default interface Movie {
+interface Movie {
     id: number;
     title: string;
     year: number;
@@ -11,3 +11,5 @@ export default interface Movie {
     plot: string;
     posterUrl: string;
 }
+
+export default Movie;
