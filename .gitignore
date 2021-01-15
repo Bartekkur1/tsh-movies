@@ -1,3 +1,4 @@
 /node_modules/
 /build/
 /tsh-movies.log
+/tests/db.test.json
