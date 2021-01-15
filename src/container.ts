@@ -3,7 +3,7 @@ import { AppConfig, registerAppConfig } from "./config";
 import { registerLogger } from "./container/logger";
 import { registerLowdb } from "./container/lowdbClient";
 import { registerLowdbMovieRepository } from "./repository/movieRepository";
-import { registerMovieService } from "./service/movieService";
+import { registerMovieService } from "./service/basicMovieService";
 
 export const createContainer = async (appConfig: AppConfig): Promise<awilix.AwilixContainer> => {
 
