@@ -4,7 +4,7 @@ import MovieSO from "../model/so/movieSO";
 import MovieRepository from "../repository/types";
 import MovieService from "./types";
 
-export class BaseMovieService implements MovieService {
+export class BasicMovieService implements MovieService {
 
     private movieRepository: MovieRepository;
 
@@ -19,10 +19,11 @@ export class BaseMovieService implements MovieService {
     findMovies(movieSo: MovieSO): Movie[] {
         throw new Error("Method not implemented.");
     }
+
 }
 
 export const registerMovieService = (container: AwilixContainer): void => {
     container.register({
-        movieService: asClass(BaseMovieService).singleton()
+        movieService: asClass(BasicMovieService).singleton()
     });
 };
