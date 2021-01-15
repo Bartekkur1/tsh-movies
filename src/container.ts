@@ -11,7 +11,7 @@ export const createContainer = async (appConfig: AppConfig): Promise<awilix.Awil
 
     registerAppConfig(appConfig, container);
     registerLogger(container);
-    registerLowdb(container);
+    await registerLowdb(container);
 
     registerLowdbMovieRepository(container);
     registerMovieService(container);

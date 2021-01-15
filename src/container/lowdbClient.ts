@@ -1,26 +1,40 @@
 import { asClass, AwilixContainer } from "awilix";
 import { Logger } from "log4js";
 import low from "lowdb";
-import FileSync from "lowdb/adapters/FileSync";
+import FileAsync from "lowdb/adapters/FileAsync";
 import { AppConfig } from "../config";
 import { DbSchema, databaseDefaults } from "../model/dbSchema";
 import { Genre } from "../model/entity/genres";
 import { CollectionChain } from "lodash";
 
 export class LowdbClient {
-    private adapter: low.AdapterSync<DbSchema>;
-    private db: low.LowdbSync<DbSchema>;
+    private adapter: low.AdapterAsync<DbSchema>;
+    private db?: low.LowdbAsync<DbSchema>;
     private logger: Logger;
 
-    constructor(appConfig: AppConfig, logger: Logger) {
-        this.adapter = new FileSync(appConfig.lowdb.path);
-        this.logger = logger;
-        this.db = low(this.adapter);
-        this.checkDatabaseValidity();
+    public async init(): Promise<void> {
+        if (this.db === undefined) {
+            this.db = await low(this.adapter);
+            this.checkDatabaseValidity();
+        }
     }
 
-    public getAdapter(): low.LowdbSync<DbSchema> {
+    constructor(appConfig: AppConfig, logger: Logger) {
+        this.adapter = new FileAsync(appConfig.lowdb.path);
+        this.logger = logger;
+    }
+
+    public getAdapter(): low.LowdbAsync<DbSchema> {
+        if (this.db === undefined) throw new Error("Database not initialized!");
         return this.db;
+    }
+
+    public dropAll(): void {
+        this.logger.warn("Dropping all data!");
+        this.getAdapter()
+            .set("genres", databaseDefaults().genres)
+            .set("movies", [])
+            .write();
     }
 
     private checkDatabaseValidity(): void {
@@ -28,14 +42,13 @@ export class LowdbClient {
             this.logger.info("Database is empty! initialization started...");
             this.getAdapter().defaults(databaseDefaults()).write();
         } else if (this.validGenresCollection(this.getAdapter().get("genres"))) {
-            this.logger.info("Genres collection is invalid! fixing...");
-            this.fillGenres(this.getAdapter().get("genres"));
+            this.logger.info("Fixing genres collection...");
+            this.fillGenres();
         }
     }
 
-    private fillGenres(genresCollection: CollectionChain<Genre>): void {
-        const missingGenres = databaseDefaults().genres.filter(g => !genresCollection.includes(g));
-        this.getAdapter().get("genres").push(...missingGenres).write();
+    private fillGenres(): void {
+        this.getAdapter().set("genres", databaseDefaults().genres).write();
     }
 
     private validGenresCollection(genresCollection: CollectionChain<Genre>): boolean {
@@ -43,11 +56,15 @@ export class LowdbClient {
     }
 
     private genresIsEmpty(genresCollection: CollectionChain<Genre>): boolean {
-        return genresCollection === undefined || Object.keys(genresCollection).length === 0;
+        const isEmpty = genresCollection === undefined || Object.keys(genresCollection).length === 0;
+        if (isEmpty) this.logger.info("Genres collection is empty or undefined!");
+        return isEmpty;
     }
 
     private genresInvalidSize(genresCollection: CollectionChain<Genre>): boolean {
-        return genresCollection.value().length !== databaseDefaults().genres.length;
+        const isInvalid = genresCollection.value().length !== databaseDefaults().genres.length;
+        if (isInvalid) this.logger.info("Genres collection invalid size!");
+        return isInvalid;
     }
 
     private databaseIsEmpty() {
@@ -55,8 +72,9 @@ export class LowdbClient {
     }
 }
 
-export const registerLowdb = (container: AwilixContainer): void => {
+export const registerLowdb = async (container: AwilixContainer): Promise<void> => {
     container.register({
         lowdb: asClass(LowdbClient).singleton()
     });
+    await container.resolve<LowdbClient>("lowdb").init();
 };
