@@ -1,3 +1,4 @@
+/*eslint-disable */
 export default {
   clearMocks: true,
   coverageProvider: "v8",
@@ -10,3 +11,4 @@ export default {
     "node_modules/(?!variables/.*)"
   ]
 };
+/*eslint-enable */

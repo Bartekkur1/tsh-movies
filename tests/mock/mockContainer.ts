@@ -1,5 +1,5 @@
 import { AwilixContainer } from "awilix";
-import { createContainer } from "../src/container";
+import { createContainer } from "../../src/container";
 
 export const mockContainer = async (): Promise<AwilixContainer> => {
     return createContainer({
