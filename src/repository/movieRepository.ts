@@ -15,11 +15,17 @@ export class LowdbMovieRepository implements MovieRepository {
     }
 
     saveMovie(movie: Movie): void {
+        movie.id = this.generateNewMovieId();
         throw new Error("Method not implemented.");
     }
 
     findMovies(movieSo: MovieSO): Movie[] {
         throw new Error("Method not implemented.");
+    }
+
+    private generateNewMovieId(): number {
+        const newestMovie = this.moviesCollection.orderBy("id", "desc").find().value();
+        return newestMovie === undefined ? 1 : newestMovie.id + 1;
     }
 }
 

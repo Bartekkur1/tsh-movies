@@ -1,4 +1,4 @@
-import { Genre } from "./entity/genres";
+import { Genre, GenresArray } from "./entity/genres";
 import Movie from "./entity/movie";
 
 interface DbSchema {
@@ -6,4 +6,12 @@ interface DbSchema {
     genres: Genre[];
 }
 
-export default DbSchema;
+const databaseDefaults = (): DbSchema => {
+    const defaultGenres = GenresArray.map(s => s as Genre);
+    return {
+        genres: defaultGenres,
+        movies: []
+    };
+};
+
+export { DbSchema, databaseDefaults };
