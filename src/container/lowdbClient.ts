@@ -1,4 +1,4 @@
-import { asClass, AwilixContainer } from "awilix";
+import { asClass, asValue, AwilixContainer } from "awilix";
 import { Logger } from "log4js";
 import low from "lowdb";
 import FileAsync from "lowdb/adapters/FileAsync";
@@ -77,4 +77,12 @@ export const registerLowdb = async (container: AwilixContainer): Promise<void> =
         lowdb: asClass(LowdbClient).singleton()
     });
     await container.resolve<LowdbClient>("lowdb").init();
+};
+
+export const registerCollections = (container: AwilixContainer): void => {
+    const lowdbClient = container.resolve<LowdbClient>("lowdb");
+    container.register({
+        moviesCollection: asValue(lowdbClient.getAdapter().get("movies")),
+        genresCollection: asValue(lowdbClient.getAdapter().get("genres"))
+    });
 };

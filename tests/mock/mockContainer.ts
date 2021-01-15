@@ -11,4 +11,4 @@ export const mockContainer = async (): Promise<AwilixContainer> => {
             path: "./tests/db.test.json"
         }
     });
-}
+};

@@ -1,8 +1,8 @@
 import * as awilix from "awilix";
 import { AppConfig, registerAppConfig } from "./config";
 import { registerLogger } from "./container/logger";
-import { registerLowdb } from "./container/lowdbClient";
-import { registerLowdbMovieRepository } from "./repository/movieRepository";
+import { registerCollections, registerLowdb } from "./container/lowdbClient";
+import { registerLowdbMovieRepository } from "./repository/lowdbMovieRepository";
 import { registerMovieService } from "./service/basicMovieService";
 
 export const createContainer = async (appConfig: AppConfig): Promise<awilix.AwilixContainer> => {
@@ -12,6 +12,7 @@ export const createContainer = async (appConfig: AppConfig): Promise<awilix.Awil
     registerAppConfig(appConfig, container);
     registerLogger(container);
     await registerLowdb(container);
+    registerCollections(container);
 
     registerLowdbMovieRepository(container);
     registerMovieService(container);

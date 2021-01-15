@@ -1,5 +1,6 @@
 import { Genre, GenresArray } from "./entity/genres";
 import Movie from "./entity/movie";
+import { CollectionChain } from "lodash";
 
 interface DbSchema {
     movies: Movie[];
@@ -14,4 +15,7 @@ const databaseDefaults = (): DbSchema => {
     };
 };
 
-export { DbSchema, databaseDefaults };
+type MoviesCollection = CollectionChain<Movie>;
+type GenresCollection = CollectionChain<Movie>;
+
+export { DbSchema, databaseDefaults, MoviesCollection, GenresCollection };

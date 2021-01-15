@@ -2,19 +2,17 @@ import Movie from "../model/entity/movie";
 import MovieSO from "../model/so/movieSO";
 import MovieRepository from "./types";
 import { CollectionChain } from "lodash";
-import { LowdbClient } from "../container/lowdbClient";
 import { asClass, AwilixContainer } from "awilix";
 
 export class LowdbMovieRepository implements MovieRepository {
 
     private moviesCollection: CollectionChain<Movie>;
 
-    constructor(lowdb: LowdbClient) {
-        const adapter = lowdb.getAdapter();
-        this.moviesCollection = adapter.get("movies");
+    constructor(moviesCollection: CollectionChain<Movie>) {
+        this.moviesCollection = moviesCollection;
     }
 
-    saveMovie(movie: Movie): void {
+    saveMovie(movie: Movie): Promise<void> {
         movie.id = this.generateNewMovieId();
         throw new Error("Method not implemented.");
     }

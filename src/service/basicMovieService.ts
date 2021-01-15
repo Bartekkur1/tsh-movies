@@ -12,7 +12,7 @@ export class BasicMovieService implements MovieService {
         this.movieRepository = movieRepository;
     }
 
-    public saveMovie(movie: Movie): void {
+    public saveMovie(movie: Movie): Promise<void> {
         throw new Error("Method not implemented.");
     }
 
