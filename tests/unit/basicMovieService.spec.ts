@@ -3,7 +3,7 @@ import MovieRepository from "../../src/repository/types";
 import MovieService from "../../src/service/types";
 import MovieSO from "../../src/model/so/movieSO";
 import { mock, verify } from "ts-mockito";
-import mockMovie from "../mock/mockMovie";
+import { mockMovie } from "../mock/mockMovies";
 
 describe("Basic movie service", () => {
 
@@ -22,9 +22,22 @@ describe("Basic movie service", () => {
         verify(movieRepository.saveMovie(mockMovie)).called();
     });
 
+    it("Saving invalid movie results in exception", () => {
+        const invalidMovie: any = { ...mockMovie, genres: ["Invalid", "Genres"] };
+        expect(() => movieService.saveMovie(invalidMovie)).toThrowError();
+        verify(movieRepository.saveMovie(invalidMovie)).never();
+        verify(movieRepository.generateNewMovieId()).never();
+    });
+
     it("Search movies", () => {
         const movieSo: MovieSO = { duration: 10, genres: ["Action", "Adventure"] };
         movieService.findMovies(movieSo);
-        verify(movieRepository.findMovies(movieSo));
+        verify(movieRepository.findMovies(movieSo)).called();
+    });
+
+    it("Searching movie by invalid genres results in exception", () => {
+        const movieSo: any = { duration: 10, genres: ["Invalid", "Genres"] };
+        expect(() => movieService.findMovies(movieSo)).toThrowError();
+        verify(movieRepository.findMovies(movieSo)).never();
     });
 });
