@@ -4,7 +4,6 @@ import low from "lowdb";
 import FileAsync from "lowdb/adapters/FileAsync";
 import { AppConfig } from "../config";
 import { DbSchema, databaseDefaults } from "../model/dbSchema";
-import { Genre } from "../model/entity/genres";
 import { CollectionChain } from "lodash";
 
 export class LowdbClient {
@@ -15,7 +14,7 @@ export class LowdbClient {
     public async init(): Promise<void> {
         if (this.db === undefined) {
             this.db = await low(this.adapter);
-            this.checkDatabaseValidity();
+            this.checkDatabaseCohesion();
         }
     }
 
@@ -29,39 +28,39 @@ export class LowdbClient {
         return this.db;
     }
 
-    public dropAll(): void {
-        this.logger.warn("Dropping all data!");
-        this.getAdapter()
+    public async clearDatabase(): Promise<void> {
+        return this.getAdapter()
             .set("genres", databaseDefaults().genres)
             .set("movies", [])
             .write();
     }
 
-    private checkDatabaseValidity(): void {
+    private async checkDatabaseCohesion(): Promise<void> {
         if (this.databaseIsEmpty()) {
             this.logger.info("Database is empty! initialization started...");
-            this.getAdapter().defaults(databaseDefaults()).write();
+            await this.getAdapter().defaults(databaseDefaults()).write();
         } else if (this.validGenresCollection(this.getAdapter().get("genres"))) {
             this.logger.info("Fixing genres collection...");
-            this.fillGenres();
+            await this.fillGenres();
         }
+        return Promise.resolve();
     }
 
-    private fillGenres(): void {
-        this.getAdapter().set("genres", databaseDefaults().genres).write();
+    private fillGenres(): Promise<void> {
+        return this.getAdapter().set("genres", databaseDefaults().genres).write();
     }
 
-    private validGenresCollection(genresCollection: CollectionChain<Genre>): boolean {
+    private validGenresCollection(genresCollection: CollectionChain<string>): boolean {
         return this.genresIsEmpty(genresCollection) || this.genresInvalidSize(genresCollection);
     }
 
-    private genresIsEmpty(genresCollection: CollectionChain<Genre>): boolean {
+    private genresIsEmpty(genresCollection: CollectionChain<string>): boolean {
         const isEmpty = genresCollection === undefined || Object.keys(genresCollection).length === 0;
         if (isEmpty) this.logger.info("Genres collection is empty or undefined!");
         return isEmpty;
     }
 
-    private genresInvalidSize(genresCollection: CollectionChain<Genre>): boolean {
+    private genresInvalidSize(genresCollection: CollectionChain<string>): boolean {
         const isInvalid = genresCollection.value().length !== databaseDefaults().genres.length;
         if (isInvalid) this.logger.info("Genres collection invalid size!");
         return isInvalid;

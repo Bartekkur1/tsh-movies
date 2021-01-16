@@ -1,4 +1,4 @@
-export const GenresArray = [
+export const defaultGenresArray = [
     "Comedy",
     "Fantasy",
     "Crime",
@@ -22,4 +22,4 @@ export const GenresArray = [
     "Sport"
 ] as const;
 
-export type Genre = typeof GenresArray[number];
+export type Genre = typeof defaultGenresArray[number];

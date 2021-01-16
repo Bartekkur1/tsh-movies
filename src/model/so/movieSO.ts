@@ -1,7 +1,5 @@
-import { Genre } from "../entity/genres";
-
 interface MovieSO {
-    genres?: Genre[];
+    genres?: string[];
     duration?: number;
 }
 

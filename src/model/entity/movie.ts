@@ -1,11 +1,9 @@
-import { Genre } from "./genres";
-
 interface Movie {
     id: number;
     title: string;
     year: number;
     runtime: number;
-    genres: Genre[];
+    genres: string[];
     director: string;
     actors: string;
     plot: string;

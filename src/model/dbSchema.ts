@@ -1,16 +1,15 @@
-import { Genre, GenresArray } from "./entity/genres";
 import Movie from "./entity/movie";
 import { CollectionChain } from "lodash";
+import { defaultGenresArray } from "./genres";
 
 interface DbSchema {
     movies: Movie[];
-    genres: Genre[];
+    genres: string[];
 }
 
 const databaseDefaults = (): DbSchema => {
-    const defaultGenres = GenresArray.map(s => s as Genre);
     return {
-        genres: defaultGenres,
+        genres: defaultGenresArray.map(g => g as string),
         movies: []
     };
 };
