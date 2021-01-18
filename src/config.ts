@@ -5,7 +5,7 @@ export interface LowdbConfig {
 }
 
 export interface ExpressConfig {
-    port: string;
+    port: number;
     address: string;
 }
 
@@ -21,6 +21,8 @@ export const validateConfig = (config: AppConfig): AppConfig => {
 
 export const registerAppConfig = (config: AppConfig, container: AwilixContainer): void => {
     container.register({
-        appConfig: asValue(validateConfig(config))
+        appConfig: asValue(validateConfig(config)),
+        expressConfig: asValue(config.express),
+        lowdbConfig: asValue(config.lowdb)
     });
 };

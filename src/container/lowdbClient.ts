@@ -2,7 +2,7 @@ import { asClass, asValue, AwilixContainer } from "awilix";
 import { Logger } from "log4js";
 import low from "lowdb";
 import FileAsync from "lowdb/adapters/FileAsync";
-import { AppConfig } from "../config";
+import { LowdbConfig } from "../config";
 import { DbSchema, databaseDefaults } from "../model/dbSchema";
 import { CollectionChain } from "lodash";
 
@@ -18,8 +18,8 @@ export class LowdbClient {
         }
     }
 
-    constructor(appConfig: AppConfig, logger: Logger) {
-        this.adapter = new FileAsync(appConfig.lowdb.path);
+    constructor(lowdbConfig: LowdbConfig, logger: Logger) {
+        this.adapter = new FileAsync(lowdbConfig.path);
         this.logger = logger;
     }
 
