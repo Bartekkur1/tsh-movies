@@ -40,4 +40,10 @@ describe("Basic movie service", () => {
         expect(() => movieService.findMovies(movieSo)).toThrowError();
         verify(movieRepository.findMovies(movieSo)).never();
     });
+
+    it("Should call repository methods when checking movie genres", () => {
+        const genres: string[] = ["For", "Sure", "Genre"];
+        movieService.genresExists(genres);
+        verify(movieRepository.genresExists(genres)).called();
+    });
 });

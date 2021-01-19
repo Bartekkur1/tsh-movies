@@ -11,6 +11,9 @@ export class LowdbMovieRepository implements MovieRepository {
     constructor(moviesCollection: CollectionChain<Movie>) {
         this.moviesCollection = moviesCollection;
     }
+    genresExists(genres: string[]): boolean {
+        throw new Error("Method not implemented.");
+    }
 
     saveMovie(movie: Movie): Promise<void> {
         movie.id = this.generateNewMovieId();

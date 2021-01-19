@@ -29,7 +29,7 @@ describe("Movie creation rest api", () => {
             .put("/api/movie")
             .send(movie)
             .end((err, res) => {
-                expect(res.status).toBe(200);
+                expect(res.status).toBe(201);
                 expect(beforeMovieCount).toBeLessThan(getMoviesCount());
             });
     };
@@ -79,6 +79,10 @@ describe("Movie creation rest api", () => {
         addMovieAndExpectError({ ...mockMovie, title: toolongTitle }, "Movie title is too long!");
     });
 
+    it("try to save movie with too long title results in error", () => {
+        addMovieAndExpectError({ ...mockMovie, title: 123 }, "Movie title must be a string!");
+    });
+
     // - year (required, number)
 
     it("try to save movie without year results in error", () => {
@@ -88,7 +92,7 @@ describe("Movie creation rest api", () => {
     });
 
     it("try to save movie with year as string results in error", () => {
-        addMovieAndExpectError({ ...mockMovie, year: "trust_me_Im_a_year" }, "Movie title must be a number!");
+        addMovieAndExpectError({ ...mockMovie, year: "trust_me_Im_a_year" }, "Movie year must be a number!");
     });
 
     // - runtime (required, number)

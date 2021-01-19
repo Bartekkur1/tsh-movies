@@ -12,7 +12,7 @@ export class BasicMovieService implements MovieService {
         this.movieRepository = movieRepository;
     }
 
-    public saveMovie(movie: Movie): Promise<void> {
+    saveMovie(movie: Movie): Promise<void> {
         throw new Error("Method not implemented.");
     }
 
@@ -20,6 +20,9 @@ export class BasicMovieService implements MovieService {
         throw new Error("Method not implemented.");
     }
 
+    genresExists(genres: string[]): boolean {
+        throw new Error("Method not implemented.");
+    }
 }
 
 export const registerMovieService = (container: AwilixContainer): void => {
