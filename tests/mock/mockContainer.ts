@@ -1,7 +1,8 @@
 import { AwilixContainer } from "awilix";
+import { Logger } from "log4js";
 import { createContainer } from "../../src/container";
 
-export const mockContainer = async (): Promise<AwilixContainer> => {
+export const mockContainer = async (logger: Logger): Promise<AwilixContainer> => {
     return createContainer({
         express: {
             address: "localhost",
@@ -10,5 +11,5 @@ export const mockContainer = async (): Promise<AwilixContainer> => {
         lowdb: {
             path: "./tests/db.test.json"
         }
-    });
+    }, logger);
 };

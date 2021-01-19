@@ -1,4 +1,5 @@
 import * as awilix from "awilix";
+import { Logger } from "log4js";
 import { registerErrorHandler } from "./api/apiErrorHandler";
 import { registerMovieApi } from "./api/movieApi";
 import { registerRouter } from "./api/router";
@@ -10,12 +11,12 @@ import { registerLowdbMovieRepository } from "./repository/lowdbMovieRepository"
 import { registerMovieService } from "./service/basicMovieService";
 import { registerModelValidators } from "./validator";
 
-export const createContainer = async (appConfig: AppConfig): Promise<awilix.AwilixContainer> => {
+export const createContainer = async (appConfig: AppConfig, logger: Logger): Promise<awilix.AwilixContainer> => {
 
     const container = awilix.createContainer({ injectionMode: "CLASSIC" });
 
     registerAppConfig(appConfig, container);
-    registerLogger(container);
+    registerLogger(container, logger);
     await registerLowdb(container);
     registerCollections(container);
 

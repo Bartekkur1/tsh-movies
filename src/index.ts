@@ -2,10 +2,10 @@ import { createContainer } from "./container";
 import config from "../config.json";
 import { AppConfig, ExpressConfig } from "./config";
 import { Application } from "express";
-import { Logger } from "log4js";
+import { getLogger, Logger } from "log4js";
 
 (async () => {
-    const container = await createContainer(config as AppConfig);
+    const container = await createContainer(config as AppConfig, getLogger("info"));
 
     const expressApp = container.resolve<Application>("app");
     const logger = container.resolve<Logger>("logger");

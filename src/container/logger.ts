@@ -1,5 +1,5 @@
 import { asValue, AwilixContainer } from "awilix";
-import { configure, getLogger } from "log4js";
+import { configure, Logger } from "log4js";
 
 configure({
     appenders: {
@@ -11,8 +11,8 @@ configure({
     }
 });
 
-export const registerLogger = (container: AwilixContainer): void => {
+export const registerLogger = (container: AwilixContainer, logger: Logger): void => {
     container.register({
-        logger: asValue(getLogger("info"))
+        logger: asValue(logger)
     });
 };
