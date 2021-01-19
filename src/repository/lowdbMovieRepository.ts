@@ -7,12 +7,20 @@ import { asClass, AwilixContainer } from "awilix";
 export class LowdbMovieRepository implements MovieRepository {
 
     private moviesCollection: CollectionChain<Movie>;
+    private genresCollection: CollectionChain<string>;
 
-    constructor(moviesCollection: CollectionChain<Movie>) {
+    constructor(moviesCollection: CollectionChain<Movie>, genresCollection: CollectionChain<string>) {
+        this.genresCollection = genresCollection;
         this.moviesCollection = moviesCollection;
     }
+
     genresExists(genres: string[]): boolean {
-        throw new Error("Method not implemented.");
+        const savedGenres = this.genresCollection.value();
+        for (const genre of genres) {
+            if (!savedGenres.includes(genre))
+                return false;
+        }
+        return true;
     }
 
     saveMovie(movie: Movie): Promise<void> {
@@ -32,6 +40,6 @@ export class LowdbMovieRepository implements MovieRepository {
 
 export const registerLowdbMovieRepository = (container: AwilixContainer): void => {
     container.register({
-        movieRepository: asClass(LowdbMovieRepository).singleton()
+        movieRepository: asClass<MovieRepository>(LowdbMovieRepository).singleton()
     });
 };

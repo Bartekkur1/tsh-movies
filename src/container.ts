@@ -8,6 +8,7 @@ import { registerLogger } from "./container/logger";
 import { registerCollections, registerLowdb } from "./container/lowdbClient";
 import { registerLowdbMovieRepository } from "./repository/lowdbMovieRepository";
 import { registerMovieService } from "./service/basicMovieService";
+import { registerModelValidators } from "./validator";
 
 export const createContainer = async (appConfig: AppConfig): Promise<awilix.AwilixContainer> => {
 
@@ -20,6 +21,7 @@ export const createContainer = async (appConfig: AppConfig): Promise<awilix.Awil
 
     registerLowdbMovieRepository(container);
     registerMovieService(container);
+    registerModelValidators(container);
 
     registerErrorHandler(container);
     registerMovieApi(container);

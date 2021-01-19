@@ -1,4 +1,5 @@
 import { asClass, AwilixContainer } from "awilix";
+import MovieDto from "../model/dto/MovieDto";
 import Movie from "../model/entity/movie";
 import MovieSO from "../model/so/movieSO";
 import MovieRepository from "../repository/types";
@@ -12,7 +13,7 @@ export class BasicMovieService implements MovieService {
         this.movieRepository = movieRepository;
     }
 
-    saveMovie(movie: Movie): Promise<void> {
+    saveMovie(movie: MovieDto): Promise<void> {
         throw new Error("Method not implemented.");
     }
 
@@ -21,7 +22,7 @@ export class BasicMovieService implements MovieService {
     }
 
     genresExists(genres: string[]): boolean {
-        throw new Error("Method not implemented.");
+        return this.movieRepository.genresExists(genres);
     }
 }
 

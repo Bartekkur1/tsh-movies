@@ -5,7 +5,7 @@ export const mockContainer = async (): Promise<AwilixContainer> => {
     return createContainer({
         express: {
             address: "localhost",
-            port: "8080"
+            port: 8080
         },
         lowdb: {
             path: "./tests/db.test.json"

@@ -1,7 +1,7 @@
+import MovieDto from "../../src/model/dto/MovieDto";
 import Movie from "../../src/model/entity/movie";
 
-const mockMovie: Movie = {
-    id: 0,
+const mockMovie: MovieDto = {
     title: "The Matrix",
     director: "Lana Wachowski, Lilly Wachowski",
     actors: "Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss",

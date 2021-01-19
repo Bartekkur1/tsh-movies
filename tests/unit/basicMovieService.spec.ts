@@ -2,7 +2,7 @@ import { BasicMovieService } from "../../src/service/basicMovieService";
 import MovieRepository from "../../src/repository/types";
 import MovieService from "../../src/service/types";
 import MovieSO from "../../src/model/so/movieSO";
-import { mock, verify } from "ts-mockito";
+import { instance, mock, verify } from "ts-mockito";
 import { mockMovie } from "../mock/mockMovies";
 
 describe("Basic movie service", () => {
@@ -12,13 +12,11 @@ describe("Basic movie service", () => {
 
     beforeAll(async () => {
         movieRepository = mock<MovieRepository>();
-        movieService = new BasicMovieService(movieRepository);
+        movieService = new BasicMovieService(instance(movieRepository));
     });
 
     it("Save movie", () => {
         movieService.saveMovie(mockMovie);
-        verify(movieRepository.generateNewMovieId())
-            .calledBefore(movieRepository.saveMovie(mockMovie));
         verify(movieRepository.saveMovie(mockMovie)).called();
     });
 
@@ -26,7 +24,6 @@ describe("Basic movie service", () => {
         const invalidMovie: any = { ...mockMovie, genres: ["Invalid", "Genres"] };
         expect(() => movieService.saveMovie(invalidMovie)).toThrowError();
         verify(movieRepository.saveMovie(invalidMovie)).never();
-        verify(movieRepository.generateNewMovieId()).never();
     });
 
     it("Search movies", () => {

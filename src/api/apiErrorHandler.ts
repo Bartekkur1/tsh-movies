@@ -5,7 +5,7 @@ import ErrorResponse from "../model/ErrorResponse";
 
 const createErrorHandler = (logger: Logger): ErrorRequestHandler => {
     const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-        logger.warn("Api error!" + err.message);
+        logger.warn("Api error! " + err.message);
         const errorResponse: ErrorResponse = { error: err.message };
         res.status(400).json(errorResponse);
     };

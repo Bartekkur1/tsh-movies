@@ -1,14 +1,17 @@
 import { asFunction, AwilixContainer } from "awilix";
-import { Router } from "express";
+import { Request, RequestHandler, Response, Router } from "express";
+import Movie from "../model/entity/movie";
+import MovieService from "../service/types";
 
-export const createMovieApi = (): Router => {
+export const createMovieApi = (movieService: MovieService, movieValidator: RequestHandler): Router => {
     const router = Router();
 
-    router.get("/", (req, res) => {
+    router.get("/", (req: Request, res: Response) => {
         res.sendStatus(200);
     });
 
-    router.put("/", (req, res) => {
+    router.put("/", movieValidator, (req: Request, res: Response) => {
+        const movie = req.body as Movie;
         res.sendStatus(201);
     });
 
