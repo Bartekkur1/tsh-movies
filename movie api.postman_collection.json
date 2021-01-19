@@ -1,0 +1,68 @@
+{
+	"info": {
+		"_postman_id": "6819e16e-bd7d-48d8-af61-6a52cee87efa",
+		"name": "movie api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add Movie",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"The Matrix\",\r\n    \"director\": \"Lana Wachowski, Lilly Wachowski\",\r\n    \"actors\": \"Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss\",\r\n    \"genres\": [\r\n        \"Action\",\r\n        \"Fantasy\",\r\n        \"Sci-Fi\"\r\n    ],\r\n    \"plot\": \"The film describes a future in which reality perceived by humans is actually the Matrix.\",\r\n    \"posterUrl\": \"https://youtu.be/dQw4w9WgXcQ\",\r\n    \"runtime\": 123,\r\n    \"year\": 1999\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/movie",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"movie"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search movie",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/movie?duration=100&genres=Family,History",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"movie"
+					],
+					"query": [
+						{
+							"key": "duration",
+							"value": "100"
+						},
+						{
+							"key": "genres",
+							"value": "Family,History"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
