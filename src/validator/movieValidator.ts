@@ -3,7 +3,7 @@ import Joi from "joi";
 import MovieService from "../service/types";
 import ValidationError from "./validationError";
 
-const createMovieValidationSchema = () =>
+const createMovieDtoValidationSchema = () =>
     Joi.object({
         title: Joi.string()
             .required()
@@ -35,7 +35,7 @@ export const createMovieValidator = (movieService: MovieService): RequestHandler
         if (req.body === undefined)
             throw new ValidationError("Request body is empty");
 
-        const constrains = createMovieValidationSchema().validate(req.body);
+        const constrains = createMovieDtoValidationSchema().validate(req.body);
         if (constrains.error)
             throw new ValidationError(constrains);
 

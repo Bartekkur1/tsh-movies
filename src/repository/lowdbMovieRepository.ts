@@ -22,6 +22,8 @@ export class LowdbMovieRepository implements MovieRepository {
     }
 
     genresExists(genres: string[]): boolean {
+        // Warning! 
+        // not efficient solution! not sure if I should take this every time from db or could I use locally defined values or cache
         const savedGenres = this.genresCollection.value();
         for (const genre of genres) {
             if (!savedGenres.includes(genre))
@@ -39,7 +41,7 @@ export class LowdbMovieRepository implements MovieRepository {
         const genres = movieSo.genres || [];
         const duration = movieSo.duration || 0;
 
-        if (!Number.isNaN(movieSo.duration) && movieSo.genres?.length === 0) {
+        if (movieSo.genres?.length === 0 && !Number.isNaN(movieSo.duration)) {
             return this.findRandomMovieByRuntime(duration);
         }
         else if (movieSo.genres?.length !== 0 && Number.isNaN(movieSo.duration)) {
@@ -52,33 +54,37 @@ export class LowdbMovieRepository implements MovieRepository {
     }
 
     private findRandomMovieByRuntime(duration: number): Movie[] {
-        const moviesCollectionAroundRuntime = this.moviesCollection
-            .filter(m => Number(m.runtime) >= (duration - 10) && Number(m.runtime) <= (duration + 10));
-        const moviesCount = moviesCollectionAroundRuntime.size().value();
+        const moviesCollectionAroundRuntime = this.searchMovies(false, undefined, duration);
+        const moviesCount = moviesCollectionAroundRuntime.length;
         if (moviesCount === 0)
-            return [];
+            throw new Error("Movies collection is empty!");
 
         const randomIndex = Math.floor(Math.random() * moviesCount);
-        const randomMovie = moviesCollectionAroundRuntime.value()[randomIndex];
+        const randomMovie = moviesCollectionAroundRuntime[randomIndex];
 
         return [randomMovie];
     }
 
     private findMoviesByGenres(genres: string[]): Movie[] {
-        const moviesCollectionContainingGenre = this.moviesCollection
-            .filter(m => matchedGenres(m.genres, genres) > 0)
-            .sort((a, b) => matchedGenres(b.genres, genres) - matchedGenres(a.genres, genres));
-
-        return moviesCollectionContainingGenre.value();
+        return this.searchMovies(true, genres);
     }
 
     private findMoviesByGenresAndRuntime(genres: string[], duration: number): Movie[] {
-        const moviesCollectionContainingGenre = this.moviesCollection
-            .filter(m => matchedGenres(m.genres, genres) > 0)
-            .filter(m => Number(m.runtime) >= (duration - 10) && Number(m.runtime) <= (duration + 10))
-            .sort((a, b) => matchedGenres(b.genres, genres) - matchedGenres(a.genres, genres));
+        return this.searchMovies(true, genres, duration);
+    }
 
-        return moviesCollectionContainingGenre.value();
+    private searchMovies(sort: boolean, genres?: string[], duration?: number): Movie[] {
+        let moviesCollection = this.moviesCollection;
+        if (genres) {
+            moviesCollection = moviesCollection.filter(m => matchedGenres(m.genres, genres) > 0);
+        }
+        if (duration) {
+            moviesCollection = moviesCollection.filter(m => Number(m.runtime) >= (duration - 10) && Number(m.runtime) <= (duration + 10));
+        }
+        if (sort && genres) {
+            moviesCollection = moviesCollection.sort((a, b) => matchedGenres(b.genres, genres) - matchedGenres(a.genres, genres));
+        }
+        return moviesCollection.value();
     }
 
     generateNewMovieId(): number {

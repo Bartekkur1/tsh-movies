@@ -25,7 +25,7 @@ describe("Movie search rest api", () => {
 
     // If we don't provide any parameter, then it should return a single random movie.
 
-    it("get random movie without parameters", async () => {
+    it("get random movie without request query", async () => {
         await lowdbClient.getAdapter().set("movies", mockMovies).write();
         const res = await request(app)
             .get("/api/movie")
@@ -41,7 +41,7 @@ describe("Movie search rest api", () => {
 
     // If we provide only duration parameter, then it should return a single random movie that has a runtime between <duration - 10> and <duration + 10>.
 
-    it("get random movie with duration parameter", async () => {
+    it("get random movie with request query duration", async () => {
         const searchedRuntime = 100;
         const minRuntime = searchedRuntime - 10;
         const maxRuntime = searchedRuntime + 10;

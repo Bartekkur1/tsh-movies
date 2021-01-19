@@ -32,6 +32,7 @@ describe("Movie creation rest api", () => {
         expect(response.status).toBe(400);
         expect(response.body).toHaveProperty("error");
         expect(response.body.error).toBe(errorMessage);
+        // Logger really messed up tests results so I mocked it just to make it quiet
         verify(logger.warn("Error: " + errorMessage)).called();
     };
 

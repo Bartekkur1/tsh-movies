@@ -18,8 +18,7 @@ export const createMovieApi = (
         const movieSo: MovieSO = { duration, genres };
 
         if (Number.isNaN(movieSo.duration) && movieSo.genres?.length === 0) {
-            const randomMovie = movieService.findRandomMovie();
-            return res.status(200).json(randomMovie);
+            return res.status(200).json(movieService.findRandomMovie());
         } else {
             return res.status(200).json(movieService.findMovies(movieSo));
         }
