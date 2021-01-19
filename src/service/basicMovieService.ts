@@ -13,12 +13,16 @@ export class BasicMovieService implements MovieService {
         this.movieRepository = movieRepository;
     }
 
-    saveMovie(movie: MovieDto): Promise<void> {
-        throw new Error("Method not implemented.");
+    findRandomMovie(): Movie {
+        return this.movieRepository.findRandomMovie();
+    }
+
+    async saveMovie(movie: MovieDto): Promise<void> {
+        await this.movieRepository.saveMovie(movie);
     }
 
     findMovies(movieSo: MovieSO): Movie[] {
-        throw new Error("Method not implemented.");
+        return this.movieRepository.findMovies(movieSo);
     }
 
     genresExists(genres: string[]): boolean {

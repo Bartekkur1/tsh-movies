@@ -5,6 +5,7 @@ import MovieSO from "../model/so/movieSO";
 interface MovieService {
     saveMovie(movie: MovieDto): Promise<void>;
     findMovies(movieSo: MovieSO): Movie[];
+    findRandomMovie(): Movie;
     genresExists(genres: string[]): boolean;
 }
 

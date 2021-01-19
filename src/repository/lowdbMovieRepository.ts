@@ -3,6 +3,7 @@ import MovieSO from "../model/so/movieSO";
 import MovieRepository from "./types";
 import { CollectionChain } from "lodash";
 import { asClass, AwilixContainer } from "awilix";
+import { matchedGenres } from "../util/movieUtil";
 
 export class LowdbMovieRepository implements MovieRepository {
 
@@ -14,6 +15,12 @@ export class LowdbMovieRepository implements MovieRepository {
         this.moviesCollection = moviesCollection;
     }
 
+    findRandomMovie(): Movie {
+        const moviesCount = this.moviesCollection.size().value();
+        const randomIndex = Math.floor(Math.random() * moviesCount);
+        return this.moviesCollection.find(m => m.id === randomIndex).value();
+    }
+
     genresExists(genres: string[]): boolean {
         const savedGenres = this.genresCollection.value();
         for (const genre of genres) {
@@ -23,13 +30,55 @@ export class LowdbMovieRepository implements MovieRepository {
         return true;
     }
 
-    saveMovie(movie: Movie): Promise<void> {
+    async saveMovie(movie: Movie): Promise<void> {
         movie.id = this.generateNewMovieId();
-        throw new Error("Method not implemented.");
+        await this.moviesCollection.push(movie).write();
     }
 
     findMovies(movieSo: MovieSO): Movie[] {
-        throw new Error("Method not implemented.");
+        const genres = movieSo.genres || [];
+        const duration = movieSo.duration || 0;
+
+        if (!Number.isNaN(movieSo.duration) && movieSo.genres?.length === 0) {
+            return this.findRandomMovieByRuntime(duration);
+        }
+        else if (movieSo.genres?.length !== 0 && Number.isNaN(movieSo.duration)) {
+            return this.findMoviesByGenres(genres);
+        }
+        else if (movieSo.genres?.length !== 0 && !Number.isNaN(movieSo.duration)) {
+            return this.findMoviesByGenresAndRuntime(genres, duration);
+        }
+        return [];
+    }
+
+    private findRandomMovieByRuntime(duration: number): Movie[] {
+        const moviesCollectionAroundRuntime = this.moviesCollection
+            .filter(m => Number(m.runtime) >= (duration - 10) && Number(m.runtime) <= (duration + 10));
+        const moviesCount = moviesCollectionAroundRuntime.size().value();
+        if (moviesCount === 0)
+            return [];
+
+        const randomIndex = Math.floor(Math.random() * moviesCount);
+        const randomMovie = moviesCollectionAroundRuntime.value()[randomIndex];
+
+        return [randomMovie];
+    }
+
+    private findMoviesByGenres(genres: string[]): Movie[] {
+        const moviesCollectionContainingGenre = this.moviesCollection
+            .filter(m => matchedGenres(m.genres, genres) > 0)
+            .sort((a, b) => matchedGenres(b.genres, genres) - matchedGenres(a.genres, genres));
+
+        return moviesCollectionContainingGenre.value();
+    }
+
+    private findMoviesByGenresAndRuntime(genres: string[], duration: number): Movie[] {
+        const moviesCollectionContainingGenre = this.moviesCollection
+            .filter(m => matchedGenres(m.genres, genres) > 0)
+            .filter(m => Number(m.runtime) >= (duration - 10) && Number(m.runtime) <= (duration + 10))
+            .sort((a, b) => matchedGenres(b.genres, genres) - matchedGenres(a.genres, genres));
+
+        return moviesCollectionContainingGenre.value();
     }
 
     generateNewMovieId(): number {
