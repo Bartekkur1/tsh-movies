@@ -1,22 +1,25 @@
 import { LowdbClient } from "../../src/container/lowdbClient";
 import { mockContainer } from "../mock/mockContainer";
 import { AwilixContainer } from "awilix";
-import { mockMovie } from "../mock/mockMovies";
+import { mockMovie, mockMovies } from "../mock/mockMovies";
 import request from "supertest";
+import { Logger } from "log4js";
+import { instance, mock, verify } from "ts-mockito";
 
 describe("Movie creation rest api", () => {
 
     let container: AwilixContainer;
     let lowdbClient: LowdbClient;
+    let logger: Logger;
     let app: any;
 
     beforeAll(async () => {
-        container = await mockContainer();
+        logger = mock(Logger);
+        container = await mockContainer(instance(logger));
         lowdbClient = container.resolve<LowdbClient>("lowdb");
+        await lowdbClient.getAdapter().set("movies", mockMovies).write();
         app = container.resolve("app");
     });
-
-    const getMoviesCount = () => lowdbClient.getAdapter().get("movies").size().value();
 
     const addMovieAndExpectError = async (movie: any, errorMessage: string): Promise<void> => {
         const response = await request(app)
@@ -29,6 +32,7 @@ describe("Movie creation rest api", () => {
         expect(response.status).toBe(400);
         expect(response.body).toHaveProperty("error");
         expect(response.body.error).toBe(errorMessage);
+        verify(logger.warn("Error: " + errorMessage)).called();
     };
 
     const addMovieAndDontExpectError = async (movie: any) => {
@@ -40,9 +44,8 @@ describe("Movie creation rest api", () => {
             .expect(201);
     };
 
-
     it("successfully save movie without errors", async () => {
-        const beforeMovieCount = getMoviesCount();
+        const beforeMovieCount = lowdbClient.getAdapter().get("movies").size().value();
         const res = await request(app)
             .put("/api/movie")
             .set("Content-Type", "application/json")
@@ -50,7 +53,7 @@ describe("Movie creation rest api", () => {
             .send(mockMovie);
 
         expect(res.status).toBe(201);
-        expect(beforeMovieCount).toBeLessThan(getMoviesCount());
+        expect(beforeMovieCount).toBeLessThan(lowdbClient.getAdapter().get("movies").size().value());
     });
 
     // - a list of genres (only predefined ones from db file) (required, array of predefined strings)

@@ -4,16 +4,20 @@ import request from "supertest";
 import { LowdbClient } from "../../src/container/lowdbClient";
 import { mockMovies } from "../mock/mockMovies";
 import Movie from "../../src/model/entity/movie";
+import { Logger } from "log4js";
+import { instance, mock } from "ts-mockito";
 
 // In any of those cases we don't want to have duplicates.
 describe("Movie search rest api", () => {
 
     let container: AwilixContainer;
     let lowdbClient: LowdbClient;
+    let logger: Logger;
     let app: any;
 
     beforeAll(async () => {
-        container = await mockContainer();
+        logger = mock(Logger);
+        container = await mockContainer(instance(logger));
         lowdbClient = container.resolve<LowdbClient>("lowdb");
         await lowdbClient.getAdapter().set("movies", mockMovies).write();
         app = container.resolve("app");
@@ -22,6 +26,7 @@ describe("Movie search rest api", () => {
     // If we don't provide any parameter, then it should return a single random movie.
 
     it("get random movie without parameters", async () => {
+        await lowdbClient.getAdapter().set("movies", mockMovies).write();
         const res = await request(app)
             .get("/api/movie")
             .send();
@@ -36,18 +41,18 @@ describe("Movie search rest api", () => {
 
     // If we provide only duration parameter, then it should return a single random movie that has a runtime between <duration - 10> and <duration + 10>.
 
-    it("get random movie without parameters", async () => {
-        const searchedRuntime = 60;
+    it("get random movie with duration parameter", async () => {
+        const searchedRuntime = 100;
         const minRuntime = searchedRuntime - 10;
         const maxRuntime = searchedRuntime + 10;
         const res = await request(app)
-            .get("/api/movie?runtime=" + searchedRuntime)
+            .get("/api/movie?duration=" + searchedRuntime)
             .send();
 
         expect(res.status).toBe(200);
-        expect(res.body).toHaveProperty("runtime");
-        expect(res.body.runtime).toBeLessThanOrEqual(maxRuntime);
-        expect(res.body.runtime).toBeLessThanOrEqual(minRuntime);
+        expect(res.body.length).toEqual(1);
+        expect(res.body[0].runtime).toBeLessThanOrEqual(maxRuntime);
+        expect(res.body[0].runtime).toBeGreaterThanOrEqual(minRuntime);
     });
 
     // If we provide only genres parameter, then it should return all movies that contain at least one of the specified genres. 
@@ -57,11 +62,11 @@ describe("Movie search rest api", () => {
 
     it("get movies by given genres", async () => {
         const res = await request(app)
-            .get("/api/movie?genres=Comedy,Fantasy,Crime")
+            .get("/api/movie?genres=Comedy,Fantasy,Crime&duration=100")
             .send();
         expect(res.status).toBe(200);
 
-        expect((res.body as Movie[]).length).toEqual(7);
+        expect((res.body as Movie[]).length).toEqual(6);
 
         const firstMovie = res.body[0] as Movie;
         expect(firstMovie.genres.length).toEqual(3);
@@ -95,15 +100,15 @@ describe("Movie search rest api", () => {
         expect(res.status).toBe(200);
         expect(movies.length).toEqual(3);
 
-        expect(movies[0].genres).toEqual(3);
+        expect(movies[0].genres.length).toEqual(3);
         expect(movies[0].runtime).toBeLessThanOrEqual(maxRuntime);
         expect(movies[0].runtime).toBeGreaterThanOrEqual(minRuntime);
 
-        expect(movies[1].genres).toEqual(2);
+        expect(movies[1].genres.length).toEqual(2);
         expect(movies[1].runtime).toBeLessThanOrEqual(maxRuntime);
         expect(movies[1].runtime).toBeGreaterThanOrEqual(minRuntime);
 
-        expect(movies[2].genres).toEqual(1);
+        expect(movies[2].genres.length).toEqual(1);
         expect(movies[2].runtime).toBeLessThanOrEqual(maxRuntime);
         expect(movies[2].runtime).toBeGreaterThanOrEqual(minRuntime);
     });
