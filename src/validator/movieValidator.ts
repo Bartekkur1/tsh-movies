@@ -39,6 +39,10 @@ export const createMovieValidator = (movieService: MovieService): RequestHandler
         if (constrains.error)
             throw new ValidationError(constrains);
 
+        const genres = req.body.genres as string[];
+        if (genres.some((e, i) => genres.indexOf(e) !== i))
+            throw new ValidationError("Movie cannot contain duplicates!");
+
         if (!movieService.genresExists(req.body.genres))
             throw new ValidationError("Movie contains unknown genres");
 

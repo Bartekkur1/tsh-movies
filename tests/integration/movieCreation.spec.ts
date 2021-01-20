@@ -66,6 +66,10 @@ describe("Movie creation rest api", () => {
         await addMovieAndExpectError({ ...mockMovie, genres: [] }, "Genres must contain at least 1 items");
     });
 
+    it("try to save movie with genres duplicates", async () => {
+        await addMovieAndExpectError({ ...mockMovie, genres: ["Action", "Action"] }, "Movie cannot contain duplicates!");
+    });
+
     it("try to save movie without genres results in error", async () => {
         const movieWihtoutGenres = Object.assign({}, mockMovie) as any;
         delete movieWihtoutGenres["genres"];
