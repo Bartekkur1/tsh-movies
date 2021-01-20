@@ -157,4 +157,8 @@ describe("Movie creation rest api", () => {
         await addMovieAndDontExpectError(movieWithoutPosterUrl);
     });
 
+    it("Save movie with invalid genre format and expects to save it", async () => {
+        await addMovieAndDontExpectError({ ...mockMovie, genres: ["Action", " Family"] });
+    });
+
 });

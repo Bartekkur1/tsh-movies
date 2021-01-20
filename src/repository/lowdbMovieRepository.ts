@@ -26,7 +26,7 @@ export class LowdbMovieRepository implements MovieRepository {
         // not efficient solution! not sure if I should take this every time from db or could I use locally defined values or cache
         const savedGenres = this.genresCollection.value();
         for (const genre of genres) {
-            if (!savedGenres.includes(genre))
+            if (!savedGenres.includes(genre.trim()))
                 return false;
         }
         return true;
