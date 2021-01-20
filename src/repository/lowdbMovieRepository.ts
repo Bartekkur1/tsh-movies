@@ -78,8 +78,10 @@ export class LowdbMovieRepository implements MovieRepository {
         if (genres) {
             moviesCollection = moviesCollection.filter(m => matchedGenres(m.genres, genres) > 0);
         }
-        if (duration) {
-            moviesCollection = moviesCollection.filter(m => Number(m.runtime) >= (duration - 10) && Number(m.runtime) <= (duration + 10));
+        if (duration !== undefined) {
+            moviesCollection = moviesCollection.filter(m => {
+                return m.runtime >= (duration - 10) && m.runtime <= (duration + 10);
+            });
         }
         if (sort && genres) {
             moviesCollection = moviesCollection.sort((a, b) => matchedGenres(b.genres, genres) - matchedGenres(a.genres, genres));
